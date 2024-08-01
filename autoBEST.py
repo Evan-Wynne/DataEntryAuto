@@ -3,10 +3,10 @@ import re
 # Define patterns for extraction
 title_pattern = re.compile(r'(€.*?)-(.*?)(?:Stage|Updated|Open)', re.DOTALL)
 location_pattern = re.compile(r'Location\s+(.*?)(?:\nLinked|CIS Researcher)', re.DOTALL)
-developer_pattern = re.compile(r'Promoter\s*(.*?)(?:\s*Contact|\s*Email|\s*County)', re.IGNORECASE | re.DOTALL)
+developer_pattern = re.compile(r'Promoter\s*([\s\S]*?)(?:\s*Contact|\s*Email|\s*Phone|\s*LinkedIn)', re.IGNORECASE)
 total_units_pattern = re.compile(r'Total Res Units\s*[:\-]?\s*(\d+)', re.IGNORECASE)
 hotel_bedrooms_pattern = re.compile(r'Hotel Bedrooms\s*[:\-]?\s*(\d+)', re.IGNORECASE)
-square_meters_pattern = re.compile(r'Floor Area\s*[:\-]?\s*(\d+\.?\d*)\s*m2', re.IGNORECASE)
+square_meters_pattern = re.compile(r'Floor\s*Area\s*[:\-]?\s*(\d[\d,]*\.?\d*)\s*m2', re.IGNORECASE)
 stage_pattern = re.compile(r'Stage\s*(.*?)\n', re.IGNORECASE)
 eircode_pattern = re.compile(r'\b[A-Z]\d{2}(\s*[A-Z0-9]{2,4})?\b')
 
@@ -143,12 +143,15 @@ def extract_stage(input_text):
     return stage_mapping.get(stage, stage)
 
 def main(input_text):
-    deals = input_text.split("Search for projects by keyword")
+    deals = input_text.split("""Search for projects by keyword or project ID
+AnyAllExact
+DashboardProject SearchCompany SearchTrackingExport
+DL""")
     results = []
 
     # Skip the first split part if it's empty (text before the first "€ - ")
     for deal in deals[1:]:
-        deal = "€ - " + deal  # Add back the split part to each deal
+        #deal = "€ - " + deal  # Add back the split part to each deal
         if deal.strip():
             title_of_deal = extract_title(deal)
             area, location = extract_location(deal)
@@ -160,8 +163,8 @@ def main(input_text):
             stage = extract_stage(deal)
             
             result = [
-                developer_name, title_of_deal, area, location, unit_type,
-                total_units, total_square_feet, square_feet_per_unit, stage
+                developer_name, title_of_deal, area, location, unit_type,'\t\t',
+                total_units,'\t\t', total_square_feet, square_feet_per_unit,'\t\t\t\t\t', stage
             ]
             results.append(result)
 

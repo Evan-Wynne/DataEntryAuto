@@ -1,227 +1,275 @@
 import re
 
+# Define the pattern for developer extraction
+developer_pattern = re.compile(r'Promoter\s*([\s\S]*?)(?:\s*Contact|\s*Email|\s*Phone|\s*LinkedIn)', re.IGNORECASE)
 
-input2 = '''
-€63m - Office Development, Dublin 2
-Stage Plans Granted
+def extract_developer(input_text):
+    developer_match = developer_pattern.search(input_text)
+    return developer_match.group(1).strip() if developer_match else "Developer name not found."
 
-Updated 23/07/2024
+
+# Test input text
+test_input_text = """
+
+Search for projects by keyword or project ID
+AnyAllExact
+DashboardProject SearchCompany SearchTrackingExport
+DL
+€15m - Residential Development
+Stage Tender
+
+Updated 01/08/2024
 
 Open with
 
 Primary sector
-Commercial  Office
+Residential  Housing Developments
 Location
-Setanta Centre, 6-15 Nassau Street, Dublin 2 and including a building at No.44 Kildare Street (know, as Transport House - at the junction of Setanta Place and Kildare Street)., Dublin 2 D02 XK75, Co. Dublin
-Linked projects
-€63m - Office Development, Kildare Street
+Oldtown Mill Road, Celbridge, Co. Kildare
 CIS Researcher
 
-Judith Irvine
+Adam Dargan
 Do you have questions or require further information on this project? Please contact me.
 CIS Next review
-Oct 2024
+Aug 2024
 Description
-23/07/2024: A decision to grant planning permission was issued by Dublin City Council on 18/07/2024 to Ternary Limited for a proposed development site extends to 5,857 square metres in area and will have a gross floor area of 37,722 square metres, including basement areas of 14,970 square metres. the application site is bounded by nassau street to the north and the rear of buildings fronting nassau street, setanta place to the south (including existing basement levels beneath setanta place street level), to the east by kildare street and the rear of the buildings fronting kildare street, and to the west by the rear of buildings fronting frederick street south. the planning applications relates to development which adjoins the rear of protected structures fronting 22 - 30 frederick street south, the rear of no. 5 and 16 - 19 nassau street and the rear of 45- 46 kildare street.
+1st August 2024: Tenders are currently being sought from contractors for this development as part of the €270 million Social Housing PPP - Bundle 4.Construction work is expected to commence in Q3/Q4 2025.
 
-The number of storeys on the existing buildings on the site varies up to a maximum of 8 storeys with roof-top plant and equipment over 2 basement levels. the development will consist of the demolition, excavation and clearance of all existing buildings and structures on the site including basements other than the existing kilkenny design store and annex 1,455 square metres and associated basement areas of 1,432 square metres (notated on the planning application drawings as 'sg1' and 'sg2' at b-1) which do not form part of the demolition/construction proposals. the western boundary walls to the rear of the protected structures fronting frederick street south and rear of 5 and 16-19 nassau street will be demolished and new boundary walls constructed. in addition to the demolition of the buildings, the development also provides for the demolition of the two existing basements (excluding the basement levels beneath setanta place which are retained and remodelled internally), and car park ramps from setanta place.
+PROCUREMENT TYPE:
+Works
 
-Following the above demolitions, excavations and site clearance the development provides for the construction a new office building extending to 8 storeys in height including setbacks at 6th, 7th and 8th storey over 4 basement levels (the two basement levels beneath setanta place which are retained and remodelled and are notated on the planning application drawings as 'sg1' and 'sg2' at basement level b-1) and new car park access/egress ramps off setanta place. the existing vehicular connection beneath setanta place between the application site and public car parking spaces in the building known as 10-11 molesworth street will be reinstated. the proposed basement levels will contain 211 car parking spaces (of which 141 will be for public use with the balance i.e. 70 for private use). the number of onsite car parking spaces on the overall site will be reduced from the existing 319 spaces to 211 spaces.
+TIME-LIMIT FOR RECEIPT OF TENDERS OR REQUESTS TO PARTICIPATE:
+10/09/2024 12:00
 
-The basement areas will also contain300 bicycle parking spaces along with associated drying areas, bicycle repair facilities, showers and locker/changing/storage areas, accessed via a dedicated cycle access/egress ramp off setanta place, circulation, waste receptacle areas, plant and equipment and tenant facilities. service and deliveries will be from nassau street and setanta place and via basement areas. a swimming pool and gymnasium are proposed at ground and b-1 levels. the development incorporates sustainable development measures including roof mounted photovoltaic cells (500sq.m), green roof areas, rain water harvesting, air-sourced heat-pumps and attenuation tank. the pedestrian link between nassau street and setanta place will be repositioned and upgraded. it is also proposed to relocate the existing mosaic mural known as the "tain wall" for the western boundary wall forward towards nassau street. the proposal includes roof terraces at 5th floor level to the northern, eastern and western elevations facing towards nassau street, south frederick street and kildare street respectively. the main entrance to the proposed development will be off nassau street, with secondary entrances off the pedestrian link and setanta place.
+END OF CLARIFICATION PERIOD:
+27/08/2024 12:00
 
-A pedestrian entrance is also provided off kildare street. the proposed development provides for 1 no. double esb substation fronting setanta place along with all associated site development works including landscaping and boundary treatments and air intake and out-let fans and ducts/vents including screened roof top mounted plant and equipment including zone for communications equipment (satellite dishes/aerials) at seventh and eight storeys.
+TENDERS OPENING DATE:
+11/09/2024 00:00
 
-Please see linked project for information on original planning application.
+CONTRACT DURATION IN MONTHS OR YEARS, INCLUDING ANY OPTIONS AND RENEWALS:
+27 years
+
+
+25/03/2024: A part 8 planning application was submitted by Kildare County Council on 21/03/2024 for this project.
+
+The proposed development includes:
+
+60 no. residential units including 40 no. houses and 20 no. apartments comprising 20 no. one bed units; 15 no. two bed units; 21 no. three bed units; and 4 no. four bed units; with renewable energy design measures (which may be provided externally) for each housing unit.Rear garden sheds serving the residential units;
+
+Landscaping works including provision of (a) open space and kick about areas; (b) natural play features; and (c) new pedestrian and cycle connections;
+Associated site and infrastructural works including provision for (a) 2 no. ESB substations and switchrooms; (b) car and bicycle parking; (d) public lighting; (e) bin storage; (f) temporary construction signage; (g) estate signage; and (h) varied site boundary treatment comprising walls and fencing; and
+all associated site development works, including removal of existing spoil from the site in advance of construction works.
+
+
 Key details
 Value
-€63.7m
+€15m
 (Estimated)
 Project ID
-1348811
+1337365
 Planning Stage
-Plans Granted
+Plans Submitted
+Contract Stage
+Tender
 CIS Next Review
-Oct 2024
-Floor Area
-37,722 m2
+Aug 2024
 Funding Type
-Private
+PPP
 Construction Type
 New Build
+Schedule of Works
+Start Date
+04 Aug 2025
 Planning Information
 Authority
-Dublin City Council
+Kildare County Council
 Planning Reference
-2407/18/X1
-Decision Date
-18 Jul 2024
+Part 8 - 1337365
 Application Date
-27 May 2024
-SiteArea
-0.59 ha
+21 Mar 2024
+Tender Information
+Tender Deadline
+10/09/2024 12:00
+Is part of framework?
+N
 Links and Files
 Documents
-Planning documents
+Part 8 Planning Application
+Documents
+Tender Documents
+Documents
+TED Europa
 Additional Information
-Storeys
-8
-Requires Demolition
-Y
-Postcode
-D02 XK75
-Structures
-1
-CompaniesMaterialsTrackingHistory
+Two Bed Houses
+15
+Three Bed Houses
+21
+Four Plus Bed Houses
+4
+Total Houses
+40
+One Bed Apartments
+20
+Total Apartments
+20
+Total Res Units
+60
+CompaniesTrackingHistory
 Promoter
-Ternary Limited
-CountyDublin 2
+Kildare County Council
+Emailcustomercare@kildarecoco.ie
 
-Planning Consultant
-Stephen Ward Town Planning and Development Consultants
-Emailplanning@wardconsult.com
+Phone+35345980200
 
-Phone+353429329791
-
-CountyCo. Louth
+CountyCo. Kildare
 
 LinkedIn
 
-'''
-'''
-print("Enter your text (type 'END' on a new line to finish):")
-input_lines = []
-while True:
-    line = input()
-    if line == "END":
-        break
-    input_lines.append(line)
-input2 = "\n".join(input_lines)
-'''
+ Website
+Co-Promoter
+National Development Finance Agency
+Emailinfo@ndfa.ie
 
-######TITLE OF THE DEAL########
-# Define the regular expression pattern for the title
-title_pattern = re.compile(r'^(.*?)Stage', re.DOTALL)
+ContactLaura McElduff
 
-# Define the regular expression pattern for the location
-location_pattern = re.compile(r'Location(.*?)CIS Researcher', re.DOTALL)
+Contact EmailLaura.McElduff@ntma.ie
 
-# Search for the patterns in the input string
-title_match = title_pattern.search(input2)
-location_match = location_pattern.search(input2)
+Phone+35312384000
 
-# Extract the title of the deal
-if title_match:
-    title_of_deal = title_match.group(1).strip()
+CountyDublin 1
 
-######LOCATION OF THE DEAL########
-# List of all 32 counties in Ireland
-counties = [
-    "Carlow", "Cavan", "Clare", "Cork", "Donegal", "Dublin", "Galway",
-    "Kerry", "Kildare", "Kilkenny", "Laois", "Leitrim", "Limerick",
-    "Longford", "Louth", "Mayo", "Meath", "Monaghan", "Offaly",
-    "Roscommon", "Sligo", "Tipperary", "Waterford", "Westmeath",
-    "Wexford", "Wicklow", "Antrim", "Armagh", "Down", "Fermanagh",
-    "Derry", "Tyrone"
-]
-# Define all necessary regex patterns at the start
-location_pattern = re.compile(r'Location\n(.*?)\nCIS Researcher', re.DOTALL)
-eircode_pattern = re.compile(r'\b[A-Z]\d{2}(\s*[A-Z0-9]{2,4})?\b')
-title_pattern = re.compile(r'^(.*?)Stage', re.DOTALL)
-developer_pattern = re.compile(r'Promoter\s*([\w\s]+)\s*Email', re.IGNORECASE)
+LinkedIn
 
-# Extract the full location
-location_match = location_pattern.search(input2)
-full_location = location_match.group(1).strip() if location_match else "Location info not found."
+ Website
+Architect
+Sean Harrington Architects
+Emailinfo@sha.ie
 
-# Remove Eircodes and split the location string
-cleaned_location = eircode_pattern.sub('', full_location)
-location_components = cleaned_location.split(',')
+Phone+35318733422
 
-# Initialize variables
-area = "Area not found"
-location = "Location not found"
+CountyDublin 1
 
-# Extract area and location based on components
-if len(location_components) >= 2:
-    area = location_components[-2].strip()
-    location = location_components[-1].strip().replace('Co. ', '')
+ Website
+Architect
+McCrossan O'Rourke Manning Architects
+Emailarch@mcorm.com
 
-# Extract title of the deal
-title_match = title_pattern.search(input2)
-title_of_deal = title_match.group(1).strip() if title_match else "Title of the deal not found."
+Phone+35314788700
 
-# Extract developer's name
-developer_match = developer_pattern.search(input2)
-developer_name = developer_match.group(1).strip() if developer_match else "Developer name not found."
+CountyDublin 8
+
+LinkedIn
+
+ Website
+Architect
+Coady Partnership Architects
+Emailadmin@coady.ie
+
+ContactStephan Carter
+
+Phone+35314976766
+
+CountyDublin 6
+
+LinkedIn
+
+ Website
+Project Manager
+Turner & Townsend
+Emaildublin@turntown.com
+
+Phone+35314003300
+
+CountyDublin 2
+
+LinkedIn
+
+ Website
+Planning Consultant
+HRA Planning Chartered Town Planning Consultants
+Emailinfo@hraplanning.ie
+
+ContactMary Hughes
+
+Phone+35387 6443389
+
+CountyDublin 7
+
+ Website
+Planning Consultant
+MacCabe Durney Barnes
+Emailplanning@mdb.ie
+
+ContactRichard Hamilton
+
+Phone+35316762594
+
+CountyDublin 2
+
+LinkedIn
+
+ Website
+Quantity Surveyor
+Currie & Brown
+Emailenquires@curriebrown.com
+
+Phone+35312843300
+
+CountyDublin 8
+
+ Website
+Mech & Elec Engineer
+Semple and McKillop
+Emailinfo@semplemckillop.com
+
+Phone+353429749570
+
+CountyCo. Monaghan
+
+LinkedIn
+
+ Website
+Site Investigation Consultant
+IGSL Limited
+Emailinfo@igsl.ie
+
+Phone+35345846176
+
+CountyCo. Kildare
+
+LinkedIn
+
+ Website
+Civil & Structural Engineer
+Malone O'Regan Consulting Engineers
+Emaildublin@morce.ie
+
+ContactDouglas Weir
+
+Contact Emaildweir@morce.ie
+
+Phone+35312602655
+
+CountyDublin 14
+
+LinkedIn
+
+ Website
+Mapbox
+Map
+Satellite
++
+−
+Draw a polyline
+Draw a rectangle
+Draw a circle
+Leaflet | © Mapbox © OpenStreetMap
+Hey,
+How may I help you today ?
 
 
+"""
 
-#####Promoter name#####
-# Define the regular expression pattern to find the developer's name
-developer_pattern = re.compile(r'Promoter\s*([\w\s]+)\s*Email', re.IGNORECASE)
-
-# Search for the pattern in the input string
-developer_match = developer_pattern.search(input2)
-
-# Print the developer's name
-if developer_match:
-    developer_name = developer_match.group(1).strip()
-    
-else:
-    print("Developer name not found.")
-
-#unit type:
-# Regular expressions to find counts and primary sector
-houses_pattern = re.compile(r'Total Houses\s*(\d+)')
-apartments_pattern = re.compile(r'Total Apartments\s*(\d+)')
-primary_sector_pattern = re.compile(r'Primary sector\s*([\w\s]+)')
-
-# Find counts of houses and apartments
-houses_count = houses_pattern.search(input2)
-apartments_count = apartments_pattern.search(input2)
-
-# Extract primary sector
-primary_sector_match = primary_sector_pattern.search(input2)
-primary_sector = primary_sector_match.group(1).strip() if primary_sector_match else ""
-
-# Determine unit type based on counts and primary sector
-unit_type = ""
-if houses_count and apartments_count:
-    houses = int(houses_count.group(1))
-    apartments = int(apartments_count.group(1))
-    if houses > 0 and apartments > 0:
-        unit_type = "Houses and Apartments"
-    elif houses > 0:
-        unit_type = "Houses"
-    elif apartments > 0:
-        unit_type = "Apartments"
-else:
-    # Fallback to primary sector if counts are not conclusive
-    if "Apartment" in primary_sector:
-        unit_type = "Apartments"
-    elif "House" in primary_sector:
-        unit_type = "Houses"
-    else:
-        # Additional mapping for other unit types could be added here
-        unit_type = primary_sector
-
-
-# Define regex for total residential units
-total_units_pattern = re.compile(r'Total Res Units\s*[:\-]?\s*(\d+)', re.IGNORECASE)
-
-# Search for total units in the input string
-total_units_match = total_units_pattern.search(input2)
-total_units = int(total_units_match.group(1)) if total_units_match else "Total number of units not found."
-
-# Assuming the rest of your script has correctly populated these variables:
-developer_name = developer_name.strip()  # Removing extra spaces and newlines
-title_of_deal = title_of_deal.strip()
-area = area.strip()
-location = location.strip()
-unit_type = unit_type.strip()
-total_units = str(total_units).strip()  # Convert to string if not already and strip
-
-# Prepare the output with exactly four spaces between each piece of information
-formatted_output = f"{developer_name}    {title_of_deal}    {area}    {location}    {unit_type}    {total_units}"
-print(formatted_output)
+# Run the test
+print(extract_developer(test_input_text))  # Expected
