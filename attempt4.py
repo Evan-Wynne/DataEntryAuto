@@ -14,6 +14,7 @@ developer_pattern = re.compile(r'Promoter\s*(.*?)(?:\s*Contact|\s*Email|\s*Count
 total_units_pattern = re.compile(r'Total Res Units\s*[:\-]?\s*(\d+)', re.IGNORECASE)
 hotel_bedrooms_pattern = re.compile(r'Hotel Bedrooms\s*[:\-]?\s*(\d+)', re.IGNORECASE)
 square_meters_pattern = re.compile(r'Floor Area\s*[:\-]?\s*(\d+\.?\d*)\s*m2', re.IGNORECASE)
+stage_pattern = re.compile(r'Stage\s*(.*?)\n', re.IGNORECASE)
 eircode_pattern = re.compile(r'\b[A-Z]\d{2}(\s*[A-Z0-9]{2,4})?\b')
 
 # Define all counties
@@ -133,21 +134,48 @@ def extract_total_units(input_text):
     # Return N/A if neither pattern is found
     return "N/A(units)"
 
-
-
 def extract_total_square_feet(input_text):
-    # Search for total square meters using the provided format
-    floor_area_pattern = re.compile(r'Floor Area\s*[:\-]?\s*(\d+\.?\d*)\s*m2', re.IGNORECASE)
-    floor_area_match = floor_area_pattern.search(input_text)
+    # Define the pattern to capture floor area in square meters
+    floor_area_pattern = re.compile(r'Floor\s*Area\s*[:\-]?\s*(\d[\d,]*\.?\d*)\s*m2', re.IGNORECASE)
     
+    # Search for total square meters
+    floor_area_match = floor_area_pattern.search(input_text)
     if floor_area_match:
-        square_meters = float(floor_area_match.group(1).strip())
+        square_meters = float(floor_area_match.group(1).strip().replace(',', ''))
         # Convert to square feet
-        square_feet = square_meters * 10.7639
-        return f"{square_feet:.2f} sq ft"
+        square_feet = round(square_meters * 10.7639)
+        return f"{square_feet}"
     
     # Return N/A if square meters are not found
     return "N/A(sq ft)"
+
+def extract_square_feet_per_unit(input_text):
+    total_square_feet = extract_total_square_feet(input_text)
+    total_units = extract_total_units(input_text)
+    
+    if total_square_feet != "N/A" and total_units != "N/A(units)":
+        total_square_feet = int(total_square_feet)
+        total_units = int(total_units)
+        square_feet_per_unit = round(total_square_feet / total_units)
+        return square_feet_per_unit
+    return "N/A"
+
+def extract_stage(input_text):
+    stage_match = stage_pattern.search(input_text)
+    if not stage_match:
+        return "Stage not found"
+
+    stage = stage_match.group(1).strip()
+
+    stage_mapping = {
+        "Plans Granted": "Planning Approved",
+        "Plans Withdrawn": "Withdrawn",
+        "Tender": "Tender",
+        "Plans Submitted": "Seeking Planning Approval",
+        # Add other mappings as needed
+    }
+
+    return stage_mapping.get(stage, stage)
 
 def main(input_text):
     title_of_deal = extract_title(input_text)
@@ -156,147 +184,156 @@ def main(input_text):
     unit_type = extract_unit_type(input_text)
     total_units = extract_total_units(input_text)
     total_square_feet = extract_total_square_feet(input_text)
+    square_feet_per_unit = extract_square_feet_per_unit(input_text)
+    stage = extract_stage(input_text)
     
-    formatted_output = f"{developer_name}    {title_of_deal}    {area}    {location}    {unit_type}\t\t{total_units}\t{total_square_feet}"
+    formatted_output = f"{developer_name}    {title_of_deal}    {area}    {location}    {unit_type}\t\t{total_units}\t\t{total_square_feet}\t{square_feet_per_unit}\t{stage}"
     print(formatted_output)
 
 input2 = '''
-€33m - LRD Student Accommodation Development, Dublin 7
+€11m - The July ApartHotel Development, Dublin 7
 Stage Plans Granted
 
-Updated 13/06/2024
+Updated 30/07/2024
 
 Open with
 
 Primary sector
-Residential  Student Accommodation
+Hospitality  Hotels
 Location
-Former IDA Centre, Prussia Street, Dublin 7, Co. Dublin
+162-164a (inclusive) Capel Street and 33-36 (inclusive) Strand Street Little, Dublin 7 D07 F861, Co. Dublin
 CIS Researcher
 
-Adam Dargan
+Clare Lennon
 Do you have questions or require further information on this project? Please contact me.
 CIS Next review
-Nov 2024
+Sep 2024
 Description
-On the 7th of June 2024 an appeal was lodged with An Bord Pleanala against Dublin City Council's decision to grant planning permission to Lyonshall Limited for a scheme comprises permission the proposed development will consist of the demolition of the existing 4 warehouse structures to provide for the construction of a 373 bedroom purpose-built student accommodation development, a ground floor cafe, and all ancillary site development works. The proposed development will be provided in 2 apartment blocks ranging in height from 3-5 storeys over basement and a single terrace of own door studio units, including 43 apartments ranging in size from 4-6 bedrooms (250 bedroom spaces), 123 studio apartments all served by bicycle parking in a dedicated bike store, bin store, plant rooms, outdoor amenity spaces and internal student amenity facilities, esb substation, rooftop mounted plant and photovoltic panels.
+30th July 2024: According to reports An Bord Pleanála has granted planning permission for an eight-storey hotel on Dublin’s Capel Street, undercutting Dublin City Council’s de facto ban on the construction of new hotels in parts of the city. In January 2023, The July group, a Dutch hospitality company, was told by Dublin City Council it cannot build a 105-bedroom hotel on a derelict site on Capel Street. The company appealed the decision and the local council’s initial ruling has now been overturned by An Bord Pleanála. (Source: Business Post).
 
-The primary access to the proposed development will be provided from prussia street to the east. The proposed development also provides for the alterations of section of the western boundary wall to provide for fencing and a gate to facilitate a maintenance access for dublin city council from drumalee court.
+Originally a decision to refuse planning permission was issued by Dublin City Council on 10/05/2023 to City ID for this project. The modification application lodged in April 2023 by City ID Capel Limited was also refused planning permission by Dublin City Council. The successful appeal was lodged in June 2023 - Appeal Reference: ABP-317264-23.
+
+Demolition works have already taken place on the site at 33-36 Strand Street Little (Working Men's Club) and buildings to the rear of the shop at 162 Capel Street, Dublin 7 to allow for over construction of this project.
+     
+This site was sold in 2022 to City ID, the Dutch hospitality group. They scaled back the planned 142-bedroom hotel to create a 105-unit aparthotel instead with each featuring fully equipped kitchens and living spaces. The group plans a €1 billion investment over the next 5 years to grow its international platform of aparthotels across major European cities.
+
+Proposed modifications to facilitate the 105-suite aparthotel include the following:
+
+Basement: internal reconfigurations at permitted basement level to provide revised plant areas and spa/wellness area.
+
+Ground Floor: alterations to the rear of the ground floor of No. 162 Capel Street, providing access to the aparthotel and an enclosed events space in this location; relocation of bicycle parking from basement level to ground floor with access to same from the laneway located on Strand Street Little; general layout modifications to the reception/restaurant/bar area.
+
+Upper Floors: internal reconfigurations from first to eight floor to facilitate 105 No. aparthotel suites and ancillary services areas; build out of setback at fifth to eight floors levels on western elevation (rear of Capel Street) and northern elevation (rear of Strand Street Little); part build out of set back at fifth and sixth floor levels on eastern elevation; inclusion of private glazed balconies on the southern side at seventh floor level; amendments to facade at street level, including the provision of retractable awnings on both the Capel Street and Strand Street Little frontages; amendments to fenestration at all levels; all associated amendments to plant, site works and services.
+
+Previous Plans: On the 6th of September 2021 An Bord Pleanala overturned Dublin City Council’s decision to refuse planning permission to Ringline Investments Limited for the hotel project. (An Bord Pleanala Ref. 309215). The project was to include the demolition of building and redevelopment of partly vacant site for a hotel with ancillary bar/cafe lobby fronting Capel Street/Strand Street Little junction and shop in 162 Capel Street. (Plan Ref: 3609/20) The new plans were then submitted by City ID Capel Limited: Permission for modifications to planning permission granted for a 5-9 storey 142 No. bedroom hotel under ref. 3609/20 (abp-309215-21) to facilitate its reconfiguration as a 105-suite aparthotel.
 Key details
 Value
-€33.4m
+€10.9m
 (Estimated)
 Project ID
-1336925
+1130190
 Planning Stage
 Plans Granted
 CIS Next Review
-Nov 2024
+Sep 2024
 Floor Area
-11,659.9 m2
+5,215 m2
 Funding Type
 Private
 Construction Type
 New Build
+Schedule of Works
+Duration
+24 months
 Planning Information
 Authority
 Dublin City Council
 Planning Reference
-LRD6050/24-S3
+5526/22
 Decision Date
-09 May 2024
+10 May 2023
 Application Date
-15 Mar 2024
+22 Dec 2022
 SiteArea
-0.58 ha
+0.08 ha
 Appeal status
-Is Under Appeal
+Approved After Appeal
 Links and Files
 Documents
 Appeal Url
 Documents
 Planning documents
 Additional Information
-One Bed Apartments
-123
-Four Bed Apartments
-3
-Five and greater bed apartments
-40
-Total Apartments
-166
-Student Bed spaces
-448
+Hotel Bedrooms
+105
 Storeys
-5
+8
 Requires Demolition
 Y
-Total Res Units
-166
-Structures
-2
+Postcode
+D07 F861
 CompaniesMaterialsTrackingHistory
 Promoter
-Lyonshall Limited
-ContactKieran Coughlan
+City ID
+Emailinfo@cityidgroup.com
 
-CountyCo. Cork
+ContactArieke Bollemeijer
 
+Phone+310207239090
+
+ Website
 Architect
-O'Mahony Pike Architects
-Emailinfo@omp.ie
+C+W O’Brien Architects
+Emailinfo@cwoarchitects.ie
 
-ContactSolene Vermount
+ContactArthur O'Brien
 
-Phone+353214272775
+Contact Emailaobrien@cwoarchitects.ie
 
-CountyCo. Cork
+Phone+35315180170
+
+CountyDublin 7
 
 LinkedIn
 
  Website
 Planning Consultant
-HW Planning
-Emailinfo@hwplanning.ie
+Simon Clear and Associates
+Emailadmin@clearconsult.ie
 
-ContactHarry Walsh
+ContactPaula Shannon
 
-Phone+353214873250
+Contact Emailpaula@clearconsult.ie
 
-CountyCo. Cork
+Phone+35314569084
+
+CountyDublin 12
+
+ Website
+Consulting Engineer
+CORA Consulting Engineers
+Emailinfo@cora.ie
+
+ContactJohn Casey
+
+Contact Emailjohn.casey@cora.ie
+
+Phone+35316611100
+
+CountyDublin 2
 
 LinkedIn
 
  Website
-Consulting Engineer
-MHL & Associates Limited
-Emailinfo@mhl.ie
+Demolition Contractor
+Breffni Group
+Emailinfo@breffnigroup.ie
 
-ContactKen Manley
+ContactRory Flynn
 
-Contact Emailkmanley@mhl.ie
+Phone+35318644586
 
-Phone+353214840214
-
-CountyCo. Cork
-
-LinkedIn
-
- Website
-Consulting Engineer
-Horgan Lynch & Partners
-Emailcork@horganlynch.ie
-
-ContactNiall Fitzgerald
-
-Contact Emailniall.fitzgerald@horganlynch.ie
-
-Phone+353214936100
-
-CountyCo. Cork
-
-LinkedIn
-
+CountyCo. Dublin
 
 '''
 
