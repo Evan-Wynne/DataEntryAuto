@@ -55,35 +55,45 @@ def extract_developer(input_text):
     return developer_match.group(1).strip() if developer_match else "Developer name not found."
 
 def extract_unit_type(input_text):
+    # Define patterns for primary sector and unit counts
     primary_sector_pattern = re.compile(r'Primary sector\s*([\w\s]+)')
-    primary_sector_match = primary_sector_pattern.search(input_text)
-    primary_sector = primary_sector_match.group(1).strip() if primary_sector_match else ""
-
     houses_pattern = re.compile(r'Total Houses\s*(\d+)')
     apartments_pattern = re.compile(r'Total Apartments\s*(\d+)')
 
+    # Extract counts of houses and apartments
     houses_count = houses_pattern.search(input_text)
     apartments_count = apartments_pattern.search(input_text)
 
-    unit_type = ""
+    # Determine unit type based on counts
     if houses_count and apartments_count:
         houses = int(houses_count.group(1))
         apartments = int(apartments_count.group(1))
         if houses > 0 and apartments > 0:
-            unit_type = "Houses and Apartments"
+            return "Houses and Apartments"
         elif houses > 0:
-            unit_type = "Houses"
+            return "Houses"
         elif apartments > 0:
-            unit_type = "Apartments"
-    else:
-        if "Apartment" in primary_sector:
-            unit_type = "Apartments"
-        elif "House" in primary_sector:
-            unit_type = "Houses"
-        else:
-            unit_type = primary_sector
+            return "Apartments"
 
-    return unit_type
+    # If counts are not conclusive, use primary sector
+    primary_sector_match = primary_sector_pattern.search(input_text)
+    primary_sector = primary_sector_match.group(1).strip() if primary_sector_match else ""
+
+    # Define unit types to search for in the primary sector
+    unit_types = [
+        "Apartments", "Houses", "Houses and Apartments", "Office", 
+        "Apartments & Creche Facility", "Co Living", "Film Studio", 
+        "Hotel", "Hotel - Aparthotel", "Industrial", "Life Sciences", 
+        "Mixed use", "Retail", "Student Accommodation", "University"
+    ]
+
+    # Check for specific keywords in the primary sector
+    for unit_type in unit_types:
+        if unit_type.lower() in primary_sector.lower():
+            return unit_type
+
+    # Fallback to primary sector itself if no specific type is found
+    return primary_sector
 
 def extract_total_units(input_text):
     total_units_match = total_units_pattern.search(input_text)
@@ -100,90 +110,152 @@ def main(input_text):
     print(formatted_output)
 
 input2 = '''
-€63m - Office Development, Dublin 2
+€11m - The July ApartHotel Development, Dublin 7
 Stage Plans Granted
 
-Updated 23/07/2024
+Updated 30/07/2024
 
 Open with
 
 Primary sector
-Commercial  Office
+Hospitality  Hotels
 Location
-Setanta Centre, 6-15 Nassau Street, Dublin 2 and including a building at No.44 Kildare Street (know, as Transport House - at the junction of Setanta Place and Kildare Street)., Dublin 2 D02 XK75, Co. Dublin
-Linked projects
-€63m - Office Development, Kildare Street
+162-164a (inclusive) Capel Street and 33-36 (inclusive) Strand Street Little, Dublin 7 D07 F861, Co. Dublin
 CIS Researcher
 
-Judith Irvine
+Clare Lennon
 Do you have questions or require further information on this project? Please contact me.
 CIS Next review
-Oct 2024
+Sep 2024
 Description
-23/07/2024: A decision to grant planning permission was issued by Dublin City Council on 18/07/2024 to Ternary Limited for a proposed development site extends to 5,857 square metres in area and will have a gross floor area of 37,722 square metres, including basement areas of 14,970 square metres. the application site is bounded by nassau street to the north and the rear of buildings fronting nassau street, setanta place to the south (including existing basement levels beneath setanta place street level), to the east by kildare street and the rear of the buildings fronting kildare street, and to the west by the rear of buildings fronting frederick street south. the planning applications relates to development which adjoins the rear of protected structures fronting 22 - 30 frederick street south, the rear of no. 5 and 16 - 19 nassau street and the rear of 45- 46 kildare street.
+30th July 2024: According to reports An Bord Pleanála has granted planning permission for an eight-storey hotel on Dublin’s Capel Street, undercutting Dublin City Council’s de facto ban on the construction of new hotels in parts of the city. In January 2023, The July group, a Dutch hospitality company, was told by Dublin City Council it cannot build a 105-bedroom hotel on a derelict site on Capel Street. The company appealed the decision and the local council’s initial ruling has now been overturned by An Bord Pleanála. (Source: Business Post).
 
-The number of storeys on the existing buildings on the site varies up to a maximum of 8 storeys with roof-top plant and equipment over 2 basement levels. the development will consist of the demolition, excavation and clearance of all existing buildings and structures on the site including basements other than the existing kilkenny design store and annex 1,455 square metres and associated basement areas of 1,432 square metres (notated on the planning application drawings as 'sg1' and 'sg2' at b-1) which do not form part of the demolition/construction proposals. the western boundary walls to the rear of the protected structures fronting frederick street south and rear of 5 and 16-19 nassau street will be demolished and new boundary walls constructed. in addition to the demolition of the buildings, the development also provides for the demolition of the two existing basements (excluding the basement levels beneath setanta place which are retained and remodelled internally), and car park ramps from setanta place.
+Originally a decision to refuse planning permission was issued by Dublin City Council on 10/05/2023 to City ID for this project. The modification application lodged in April 2023 by City ID Capel Limited was also refused planning permission by Dublin City Council. The successful appeal was lodged in June 2023 - Appeal Reference: ABP-317264-23.
 
-Following the above demolitions, excavations and site clearance the development provides for the construction a new office building extending to 8 storeys in height including setbacks at 6th, 7th and 8th storey over 4 basement levels (the two basement levels beneath setanta place which are retained and remodelled and are notated on the planning application drawings as 'sg1' and 'sg2' at basement level b-1) and new car park access/egress ramps off setanta place. the existing vehicular connection beneath setanta place between the application site and public car parking spaces in the building known as 10-11 molesworth street will be reinstated. the proposed basement levels will contain 211 car parking spaces (of which 141 will be for public use with the balance i.e. 70 for private use). the number of onsite car parking spaces on the overall site will be reduced from the existing 319 spaces to 211 spaces.
+Demolition works have already taken place on the site at 33-36 Strand Street Little (Working Men's Club) and buildings to the rear of the shop at 162 Capel Street, Dublin 7 to allow for over construction of this project.
+     
+This site was sold in 2022 to City ID, the Dutch hospitality group. They scaled back the planned 142-bedroom hotel to create a 105-unit aparthotel instead with each featuring fully equipped kitchens and living spaces. The group plans a €1 billion investment over the next 5 years to grow its international platform of aparthotels across major European cities.
 
-The basement areas will also contain300 bicycle parking spaces along with associated drying areas, bicycle repair facilities, showers and locker/changing/storage areas, accessed via a dedicated cycle access/egress ramp off setanta place, circulation, waste receptacle areas, plant and equipment and tenant facilities. service and deliveries will be from nassau street and setanta place and via basement areas. a swimming pool and gymnasium are proposed at ground and b-1 levels. the development incorporates sustainable development measures including roof mounted photovoltaic cells (500sq.m), green roof areas, rain water harvesting, air-sourced heat-pumps and attenuation tank. the pedestrian link between nassau street and setanta place will be repositioned and upgraded. it is also proposed to relocate the existing mosaic mural known as the "tain wall" for the western boundary wall forward towards nassau street. the proposal includes roof terraces at 5th floor level to the northern, eastern and western elevations facing towards nassau street, south frederick street and kildare street respectively. the main entrance to the proposed development will be off nassau street, with secondary entrances off the pedestrian link and setanta place.
+Proposed modifications to facilitate the 105-suite aparthotel include the following:
 
-A pedestrian entrance is also provided off kildare street. the proposed development provides for 1 no. double esb substation fronting setanta place along with all associated site development works including landscaping and boundary treatments and air intake and out-let fans and ducts/vents including screened roof top mounted plant and equipment including zone for communications equipment (satellite dishes/aerials) at seventh and eight storeys.
+Basement: internal reconfigurations at permitted basement level to provide revised plant areas and spa/wellness area.
 
-Please see linked project for information on original planning application.
+Ground Floor: alterations to the rear of the ground floor of No. 162 Capel Street, providing access to the aparthotel and an enclosed events space in this location; relocation of bicycle parking from basement level to ground floor with access to same from the laneway located on Strand Street Little; general layout modifications to the reception/restaurant/bar area.
+
+Upper Floors: internal reconfigurations from first to eight floor to facilitate 105 No. aparthotel suites and ancillary services areas; build out of setback at fifth to eight floors levels on western elevation (rear of Capel Street) and northern elevation (rear of Strand Street Little); part build out of set back at fifth and sixth floor levels on eastern elevation; inclusion of private glazed balconies on the southern side at seventh floor level; amendments to facade at street level, including the provision of retractable awnings on both the Capel Street and Strand Street Little frontages; amendments to fenestration at all levels; all associated amendments to plant, site works and services.
+
+Previous Plans: On the 6th of September 2021 An Bord Pleanala overturned Dublin City Council’s decision to refuse planning permission to Ringline Investments Limited for the hotel project. (An Bord Pleanala Ref. 309215). The project was to include the demolition of building and redevelopment of partly vacant site for a hotel with ancillary bar/cafe lobby fronting Capel Street/Strand Street Little junction and shop in 162 Capel Street. (Plan Ref: 3609/20) The new plans were then submitted by City ID Capel Limited: Permission for modifications to planning permission granted for a 5-9 storey 142 No. bedroom hotel under ref. 3609/20 (abp-309215-21) to facilitate its reconfiguration as a 105-suite aparthotel.
 Key details
 Value
-€63.7m
+€10.9m
 (Estimated)
 Project ID
-1348811
+1130190
 Planning Stage
 Plans Granted
 CIS Next Review
-Oct 2024
+Sep 2024
 Floor Area
-37,722 m2
+5,215 m2
 Funding Type
 Private
 Construction Type
 New Build
+Schedule of Works
+Duration
+24 months
 Planning Information
 Authority
 Dublin City Council
 Planning Reference
-2407/18/X1
+5526/22
 Decision Date
-18 Jul 2024
+10 May 2023
 Application Date
-27 May 2024
+22 Dec 2022
 SiteArea
-0.59 ha
+0.08 ha
+Appeal status
+Approved After Appeal
 Links and Files
+Documents
+Appeal Url
 Documents
 Planning documents
 Additional Information
+Hotel Bedrooms
+105
 Storeys
 8
 Requires Demolition
 Y
 Postcode
-D02 XK75
-Structures
-1
+D07 F861
 CompaniesMaterialsTrackingHistory
 Promoter
-Ternary Limited
-CountyDublin 2
+City ID
+Emailinfo@cityidgroup.com
 
-Planning Consultant
-Stephen Ward Town Planning and Development Consultants
-Emailplanning@wardconsult.com
+ContactArieke Bollemeijer
 
-Phone+353429329791
+Phone+310207239090
 
-CountyCo. Louth
+ Website
+Architect
+C+W O’Brien Architects
+Emailinfo@cwoarchitects.ie
+
+ContactArthur O'Brien
+
+Contact Emailaobrien@cwoarchitects.ie
+
+Phone+35315180170
+
+CountyDublin 7
 
 LinkedIn
+
+ Website
+Planning Consultant
+Simon Clear and Associates
+Emailadmin@clearconsult.ie
+
+ContactPaula Shannon
+
+Contact Emailpaula@clearconsult.ie
+
+Phone+35314569084
+
+CountyDublin 12
+
+ Website
+Consulting Engineer
+CORA Consulting Engineers
+Emailinfo@cora.ie
+
+ContactJohn Casey
+
+Contact Emailjohn.casey@cora.ie
+
+Phone+35316611100
+
+CountyDublin 2
+
+LinkedIn
+
+ Website
+Demolition Contractor
+Breffni Group
+Emailinfo@breffnigroup.ie
+
+ContactRory Flynn
+
+Phone+35318644586
+
+CountyCo. Dublin
+
+LinkedIn
+
 
 '''
 
