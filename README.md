@@ -1,1 +1,1 @@
-# cantor
+# This is a python script that I made to automate manual data entry into an excel sheet... because who the hell still does that.

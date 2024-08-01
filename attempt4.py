@@ -49,12 +49,10 @@ def extract_location(input_text):
 
     return area, location
 
-
 def extract_developer(input_text):
     developer_pattern = re.compile(r'Promoter\s*(.*?)(?:\s*Contact|\s*Email|\s*County)', re.IGNORECASE | re.DOTALL)
     developer_match = developer_pattern.search(input_text)
     return developer_match.group(1).strip() if developer_match else "Developer name not found."
-
 
 def extract_unit_type(input_text):
     primary_sector_pattern = re.compile(r'Primary sector\s*([\w\s]+)')
