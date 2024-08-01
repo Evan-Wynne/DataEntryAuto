@@ -1,5 +1,5 @@
 import re
-
+# Define patterns for extraction
 title_pattern = re.compile(r'€.*?-(.*?)(?:Stage|Updated|Open)', re.DOTALL)
 location_pattern = re.compile(r'Location\s+(.*?)(?:\nLinked|CIS Researcher)', re.DOTALL)
 developer_pattern = re.compile(r'Promoter\s*(.*?)(?:\s*Contact|\s*Email|\s*County)', re.IGNORECASE | re.DOTALL)

@@ -20,7 +20,6 @@ counties = [
 ]
 
 
-
 # Paste your extract functions here
 
 def extract_title(input_text):
@@ -145,6 +144,7 @@ def extract_total_square_feet(input_text):
     # Return N/A if square meters are not found
     return "N/A(sq ft)"
 
+
 def extract_square_feet_per_unit(input_text):
     total_square_feet = extract_total_square_feet(input_text)
     total_units = extract_total_units(input_text)
@@ -173,9 +173,8 @@ def extract_stage(input_text):
 
     return stage_mapping.get(stage, stage)
 
-
 def main(input_text):
-    deals = input_text.split("CIS Researcher")
+    deals = input_text.split("Search for projects by keyword")
     results = []
 
     for deal in deals:
@@ -191,16 +190,10 @@ def main(input_text):
             
             result = [
                 developer_name, title_of_deal, area, location, unit_type,
-                total_units, total_square_feet, square_feet_per_unit, stage
+                total_units, total_square_feet, square_feet_per_unit,'\t\t\t\t\t', stage
             ]
             results.append(result)
-    
-    # Print the header
-    header = [
-        "Developer Name", "Title of Deal", "Area", "Location", "Unit Type",
-        "Total Units", "Total Square Feet", "Square Feet per Unit", "Stage"
-    ]
-    print("\t".join(header))
+
 
     # Print each result row
     for result in results:

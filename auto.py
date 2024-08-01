@@ -1,172 +1,184 @@
 import re
-####finding the approx total unit number#####
-input2 ='''€75m - Ballymany SHD Development, Newbridge
-Stage On Site
 
-Updated 31/07/2024
+# Define patterns for extraction
+title_pattern = re.compile(r'(€.*?)-(.*?)(?:Stage|Updated|Open)', re.DOTALL)
+location_pattern = re.compile(r'Location\s+(.*?)(?:\nLinked|CIS Researcher)', re.DOTALL)
+developer_pattern = re.compile(r'Promoter\s*(.*?)(?:\s*Contact|\s*Email|\s*County)', re.IGNORECASE | re.DOTALL)
+total_units_pattern = re.compile(r'Total Res Units\s*[:\-]?\s*(\d+)', re.IGNORECASE)
+hotel_bedrooms_pattern = re.compile(r'Hotel Bedrooms\s*[:\-]?\s*(\d+)', re.IGNORECASE)
+square_meters_pattern = re.compile(r'Floor Area\s*[:\-]?\s*(\d+\.?\d*)\s*m2', re.IGNORECASE)
+stage_pattern = re.compile(r'Stage\s*(.*?)\n', re.IGNORECASE)
+eircode_pattern = re.compile(r'\b[A-Z]\d{2}(\s*[A-Z0-9]{2,4})?\b')
 
-Open with
+# Define all counties
+counties = [
+    "Carlow", "Cavan", "Clare", "Cork", "Donegal", "Dublin", "Galway",
+    "Kerry", "Kildare", "Kilkenny", "Laois", "Leitrim", "Limerick",
+    "Longford", "Louth", "Mayo", "Meath", "Monaghan", "Offaly",
+    "Roscommon", "Sligo", "Tipperary", "Waterford", "Westmeath",
+    "Wexford", "Wicklow", "Antrim", "Armagh", "Down", "Fermanagh",
+    "Derry", "Tyrone"
+]
 
-Primary sector
-Residential  Housing Developments
-Location
-Ballymany, Newbridge W12 YR65, Co. Kildare
-CIS Researcher
+# Paste your extract functions here
 
-Adam Dargan
-Do you have questions or require further information on this project? Please contact me.
-CIS Next review
-Research Complete
-Description
-31/07/2024: Works are expected to commence imminently on site on the construction of apartment block (Du1), 07A&B, 08A&B, 09A&B, and 10A&B Stables Green, Curragh Farm, Ballymany, Newbridge, Co. Kildare, with all associated site works.
+def extract_title(input_text):
+    title_match = title_pattern.search(input_text)
+    if title_match:
+        title = f"{title_match.group(1).strip()} - {title_match.group(2).strip()}"
+        return title
+    else:
+        return "Title of the deal not found."
 
-24th July 2024: Work is expected to commence imminently on the construction of apartment block (Du1), 17A&B, 18A&B, 19A&B, and 20A&B Stables Green, Curragh Farm, Ballymany, Newbridge, Co. Kildare, with all associated site works.
+def extract_location(input_text):
+    location_match = location_pattern.search(input_text)
+    if not location_match:
+        return "Area not found", "Location not found"
+    
+    full_location = location_match.group(1).strip()
+    cleaned_location = eircode_pattern.sub('', full_location)
+    location_components = [comp.strip() for comp in cleaned_location.split(',')]
 
-03/07/2024: Works are expected to commence imminently on site on the construction of phase 2 at Curragh Farm, Ballymany, Newbridge, Co. Kildare, including all associated site works.
+    area = "Area not found"
+    location = "Location not found"
+    
+    for i, component in enumerate(location_components):
+        for county in counties:
+            if county in component:
+                county_with_code = re.search(rf'\b{county}\b\s*\d{{1,2}}', component)
+                if county_with_code:
+                    location = county_with_code.group(0)
+                else:
+                    location = county
+                area = location_components[i - 1] if i > 0 else "Area not found"
+                break
+        if location != "Location not found":
+            break
 
-01/05/2024: Works are expected to commence imminently on site on the construction of apartment block (Du1), 25A&B, 26A&B, 27A&B , 28A&B, 29A&B, 30A&B, 31A&B, and 32A&B at Roan Gates, Curragh Farm, Ballymany, Newbridge, Co. Kildare, with all associated site works.
+    return area, location
 
-03/01/2024: Works are expected to commence imminently on site on the construction of Phase 2 (Houses No.9-47) Beechtree Place, Phase 2 (Houses No.11-16) Stables Green & Phase 1 (Houses 33-36) Roan Gates at Curragh Farm, Ballymany, Newbridge, Co. Kildare under planning permission number APB-312704-22, along with all associated site works.
+def extract_developer(input_text):
+    developer_match = developer_pattern.search(input_text)
+    return developer_match.group(1).strip() if developer_match else "Developer name not found."
 
-06/12/2023: Works are expected to commence imminently on site on the construction of three 2 storey, own door apartment buildings, Type Du3 with 4 No. units 64A to 65B, 4 No. units 66A to 67B and 4 No. units 68A to 69B at Rosetree Green at Curragh Farm, under planning permission number APB-312704-22.
+def extract_unit_type(input_text):
+    primary_sector_pattern = re.compile(r'Primary sector\s*([\w\s]+)')
+    houses_pattern = re.compile(r'Total Houses\s*(\d+)')
+    apartments_pattern = re.compile(r'Total Apartments\s*(\d+)')
 
-10/11/2023: We understand that the mechanical and electrical subcontractors have been appointed.
+    houses_count = houses_pattern.search(input_text)
+    apartments_count = apartments_pattern.search(input_text)
 
-08/11/2023: We understand that works are underway on the construction of Phase 1 (House No.56-73) Beechtree Place and Phase 1 (House No.21-30) Stables Green at Curragh Farm, Ballymany, Newbridge, Co. Kildare under planning permission number APB-312704-22, along with all associated site works.
+    if houses_count and apartments_count:
+        houses = int(houses_count.group(1))
+        apartments = int(apartments_count.group(1))
+        if houses > 0 and apartments > 0:
+            return "Houses and Apartments"
+        elif houses > 0:
+            return "Houses"
+        elif apartments > 0:
+            return "Apartments"
 
-12/04/2023: Works are expected to commence imminently on site on the construction of 16 No 1 Own Door Apartment units 30A to 37B Rosetree Green, Curragh Farm, in a 2 storey building and all associated siteworks at Ballymany, Newbridge, Co. Kildare under planning permission number ABP-312704-22
+    primary_sector_match = primary_sector_pattern.search(input_text)
+    primary_sector = primary_sector_match.group(1).strip() if primary_sector_match else ""
 
-21/03/2023: We understand that works are underway to complete phase 1 of 40 residential dwellings at Rosetree Green SHD, Ballymany, Newbridge, Co. Kildare under planning permission number ABP-312704-22
+    unit_types = [
+        "Apartments", "Houses", "Houses and Apartments", "Office", 
+        "Apartments & Creche Facility", "Co Living", "Film Studio", 
+        "Hotel", "Hotel - Aparthotel", "Industrial", "Life Sciences", 
+        "Mixed use", "Retail", "Student Accommodation", "University"
+    ]
 
-15th September 2022: This project has been approved planning.
+    for unit_type in unit_types:
+        if unit_type.lower() in primary_sector.lower():
+            return unit_type
 
-Briargate Developments Newbridge Limited have lodged a Strategic Housing Development with An Bord Pleanála for the following development:
+    return primary_sector
 
-The application site is bounded to the north by Standhouse Road and the rear of dwellings fronting that road; to the south by Ballymany Road (R445); to the east by the gardens of houses in the Elms housing development and a playing field’ and to the west by agricultural fields of Ballymany Studfarm.
+def extract_total_units(input_text):
+    total_units_match = total_units_pattern.search(input_text)
+    if total_units_match:
+        return total_units_match.group(1).strip()
+    
+    hotel_bedrooms_match = hotel_bedrooms_pattern.search(input_text)
+    if hotel_bedrooms_match:
+        return hotel_bedrooms_match.group(1).strip()
+    
+    return "N/A(units)"
 
-The development will consist of future phases of a residential development of which Phase 1 (54 no. units and Link Road) is currently under construction on foot of planning Ref. 16/658 (ABP REF. PL09.249038), which provided for 280 dwelling units, creche, nursing home and Link Road. The overall development will provide 390 no. units and creche on completion.
+def extract_total_square_feet(input_text):
+    floor_area_match = square_meters_pattern.search(input_text)
+    if floor_area_match:
+        square_meters = float(floor_area_match.group(1).strip().replace(',', ''))
+        square_feet = round(square_meters * 10.7639)
+        return f"{square_feet}"
+    
+    return "N/A(sq ft)"
 
-In summary the proposed development will consist of the following:-
+def extract_square_feet_per_unit(input_text):
+    total_square_feet = extract_total_square_feet(input_text)
+    total_units = extract_total_units(input_text)
+    
+    if total_square_feet != "N/A(sq ft)" and total_units != "N/A(units)":
+        total_square_feet = int(total_square_feet)
+        total_units = int(total_units)
+        square_feet_per_unit = round(total_square_feet / total_units)
+        return square_feet_per_unit
+    return "N/A"
 
-Construction of 336 no. residential units consisting of 245 no. houses, 27 no. apartments and 64 no. duplexes;
-The apartments are located in a part 3-storey and part 4-storey building and the duplexes are located across 6 no. 2 to 3-storey buildings;
-A 2-storey creche;
-Car parking, bicycle parking, internal roads, services infrastructure, bin stores and bicycle stores;
-Landscaping, open spaces, play areas, boundary treatment and public lighting;
-Footpath improvements along Standhouse Road and all associated site works and services.
-Key details
-Value
-€75.8m
-(Estimated)
-Project ID
-1214061
-Planning Stage
-Plans Granted
-Contract Stage
-On Site
-CIS Next Review
-Research Complete
-Floor Area
-34,799.95 m2
-Funding Type
-Private
-Construction Type
-New Build
-Schedule of Works
-Start Date
-21 Mar 2023
-Finish Date
-13 Mar 2028
-Duration
-60 months
-Planning Information
-Authority
-Kildare County Council
-Planning Reference
-ABPREF312704
-Decision Date
-06 Sep 2022
-Application Date
-11 Feb 2022
-SiteArea
-11.4 ha
-Links and Files
-Documents
-An Bord Pleanala
-Documents
-Planning Documents
-Additional Information
-Units Commenced
-217
-Units Complete
-29
-Two Bed Houses
-17
-Three Bed Houses
-184
-Four Plus Bed Houses
-44
-Total Houses
-245
-One Bed Apartments
-45
-Two Bed Apartments
-29
-Three Bed Apartments
-17
-Total Apartments
-91
-Storeys
-4
-Postcode
-W12 YR65
-Total Res Units
-336
-CompaniesMaterialsTrackingHistory
-Promoter
-Briargate Developments
-Emailinfo@anthonyneville.ie
+def extract_stage(input_text):
+    stage_match = stage_pattern.search(input_text)
+    if not stage_match:
+        return "Stage not found"
 
-Phone+353539142386
+    stage = stage_match.group(1).strip()
 
-CountyCo. Wexford
+    stage_mapping = {
+        "Plans Granted": "Planning Approved",
+        "Plans Withdrawn": "Withdrawn",
+        "Tender": "Tender",
+        "Plans Submitted": "Seeking Planning Approval",
+    }
 
- Website
-Promoter
-Anthony Neville Homes
-Emailinfo@anthonyneville.ie
+    return stage_mapping.get(stage, stage)
 
-Phone+353539142386
+def main(input_text):
+    deals = input_text.split("Search for projects by keyword")
+    results = []
 
-CountyCo. Wexford
+    # Skip the first split part if it's empty (text before the first "€ - ")
+    for deal in deals[1:]:
+        deal = "€ - " + deal  # Add back the split part to each deal
+        if deal.strip():
+            title_of_deal = extract_title(deal)
+            area, location = extract_location(deal)
+            developer_name = extract_developer(deal)
+            unit_type = extract_unit_type(deal)
+            total_units = extract_total_units(deal)
+            total_square_feet = extract_total_square_feet(deal)
+            square_feet_per_unit = extract_square_feet_per_unit(deal)
+            stage = extract_stage(deal)
+            
+            result = [
+                developer_name, title_of_deal, area, location, unit_type,
+                total_units, total_square_feet, square_feet_per_unit, stage
+            ]
+            results.append(result)
 
- Website
-Architect
-Reddy Architecture and Urbanism
-Emaildublin@reddyarchitecture.com
+    # Print each result row
+    for result in results:
+        print("\t".join(map(str, result)))
 
-ContactMark Kennedy
+# Multiline input handling
+print("Please enter the input text (end with 'END' on a new line):")
 
-Contact Emailmkennedy@reddyarchitecture.com
+input_lines = []
+while True:
+    line = input()
+    if line.strip() == "END":
+        break
+    input_lines.append(line)
 
-Phone+35314987000
+input_text = "\n".join(input_lines)
 
-CountyDublin 6
-
-LinkedIn
-
-'''
-
-# Regex to find "Total Res Units" followed by a number
-total_units_pattern = re.compile(r'Total Res Units\s*(\d+)', re.IGNORECASE)
-
-# Search for the pattern in the input text
-total_units_match = total_units_pattern.search(input2)
-
-# Output the result
-if total_units_match:
-    total_units = 0
-    total_units = int(total_units_match.group(1))
-    print(f"Total Number of Units: {total_units}")
-else:
-    print("Total number of units not found.")
+main(input_text)
