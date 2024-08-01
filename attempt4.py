@@ -1,12 +1,4 @@
 import re
-'''
-# Define the regular expression patterns
-title_pattern = re.compile(r'€\d+.*?-(.*?)(?:Stage|Updated|Open)', re.DOTALL)
-location_pattern = re.compile(r'Location\s+(.*?)(?:\nLinked|CIS Researcher)', re.DOTALL)
-developer_pattern = re.compile(r'Promoter\s*([\w\s]+)\s*Email', re.IGNORECASE)
-total_units_pattern = re.compile(r'Total Res Units\s*[:\-]?\s*(\d+)', re.IGNORECASE)
-eircode_pattern = re.compile(r'\b[A-Z]\d{2}(\s*[A-Z0-9]{2,4})?\b')
-'''
 
 title_pattern = re.compile(r'€.*?-(.*?)(?:Stage|Updated|Open)', re.DOTALL)
 location_pattern = re.compile(r'Location\s+(.*?)(?:\nLinked|CIS Researcher)', re.DOTALL)
@@ -187,7 +179,7 @@ def main(input_text):
     square_feet_per_unit = extract_square_feet_per_unit(input_text)
     stage = extract_stage(input_text)
     
-    formatted_output = f"{developer_name}    {title_of_deal}    {area}    {location}    {unit_type}\t\t{total_units}\t\t{total_square_feet}\t{square_feet_per_unit}\t{stage}"
+    formatted_output = f"{developer_name}\t{title_of_deal}\t{area}\t{location}\t{unit_type}\t\t{total_units}\t\t{total_square_feet}\t{square_feet_per_unit}\t\t\t\t\t\t\t\t{stage}"
     print(formatted_output)
 
 input2 = '''
@@ -337,7 +329,7 @@ CountyCo. Dublin
 
 '''
 
+
 main(input2)
 
 
-# total res units or hotel bedrooms
