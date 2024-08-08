@@ -10,8 +10,12 @@ def index():
     if request.method == 'POST':
         user_input = request.form['textinput']
         print("Received input in Flask app:", user_input[:500])  # Debug print for received input
-        output = process_input(user_input)
-        print("Processed output in Flask app:", output)  # Debug print for processed output
+        try:
+            output = process_input(user_input)
+            print("Processed output in Flask app:", output)  # Debug print for processed output
+        except Exception as e:
+            print(f"Error during processing: {e}")
+            output = f"Error during processing: {e}"
     return render_template('index.html', user_input=user_input, output=output)
 
 if __name__ == '__main__':
