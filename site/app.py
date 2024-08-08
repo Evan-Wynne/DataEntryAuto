@@ -1,22 +1,25 @@
 from flask import Flask, render_template, request
-import final  # Ensure final.py contains the processing functions
+from process import process_input  # Ensure this import works
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    user_input = None
+    output = None
     if request.method == 'POST':
         user_input = request.form['textinput']
-        print(f"Form input: {user_input}")  # Debug print to confirm input received
+        print("Received input:", user_input)  # Debug statement to check input
+
+        # Try to process the input and catch potential errors
         try:
-            output = final.process_input(user_input)  # Use process_input from final.py
-            print(f"Processed output: {output}")  # Debug print to confirm processing
+            output = process_input(user_input)
+            print("Processed output:", output)  # Debug statement to check output
         except Exception as e:
-            output = f"An error occurred: {e}"
-            print(e)  # Log to console for debugging
-        return render_template('index.html', user_input=user_input, output=output)
-    else:
-        return render_template('index.html', output=None)
+            output = f"Error processing input: {str(e)}"
+            print(output)  # Log the error
+
+    return render_template('index.html', user_input=user_input, output=output)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=True)
