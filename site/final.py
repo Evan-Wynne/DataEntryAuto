@@ -1,3 +1,5 @@
+
+
 import re
 
 # Define patterns for extraction
@@ -20,10 +22,6 @@ counties = [
     "Derry", "Tyrone"
 ]
 
-# Paste your extract functions here
-def process_input(user_input):
-    # Replace the following line with your actual processing logic
-    return f"Processed output for: {user_input}"
 
 def extract_title(input_text):
     title_match = title_pattern.search(input_text)
@@ -145,6 +143,8 @@ def extract_stage(input_text):
 
     return stage_mapping.get(stage, stage)
 
+
+'''
 def main(input_text):
     deals = input_text.split("""Search for projects by keyword or project ID
 AnyAllExact
@@ -186,6 +186,36 @@ while True:
     input_lines.append(line)
 
 input_text = "\n".join(input_lines)
+'''
 
-main(input_text)
+def process_input(input_text):
+    deals = input_text.split("""Search for projects by keyword or project ID
+AnyAllExact
+DashboardProject SearchCompany SearchTrackingExport
+DL""")
+    results = []
 
+    for deal in deals[1:]:
+        if deal.strip():
+            title_of_deal = extract_title(deal)
+            area, location = extract_location(deal)
+            developer_name = extract_developer(deal)
+            unit_type = extract_unit_type(deal)
+            total_units = extract_total_units(deal)
+            total_square_feet = extract_total_square_feet(deal)
+            square_feet_per_unit = extract_square_feet_per_unit(deal)
+            stage = extract_stage(deal)
+            
+            result = [
+                developer_name, title_of_deal, area, location, unit_type,
+                '', total_units, '', total_square_feet, square_feet_per_unit, '\t\t\t\t\t\t', stage
+            ]
+            results.append(result)
+
+    # Format each result row
+    formatted_results = "\n".join(["\t".join(map(str, result)) for result in results])
+    return formatted_results
+
+
+
+#main(input_text)

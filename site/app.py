@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request
-import final  # This should have the processing functions
-# Right after imports in app.py
-print(dir(final))  # This will print all attributes and methods in the final module
+import final  # Ensure final.py contains the processing functions
 
 app = Flask(__name__)
 
@@ -9,7 +7,13 @@ app = Flask(__name__)
 def index():
     if request.method == 'POST':
         user_input = request.form['textinput']
-        output = final.process_input(user_input)  # Make sure this function exists and does what you expect
+        print(f"Form input: {user_input}")  # Debug print to confirm input received
+        try:
+            output = final.process_input(user_input)  # Use process_input from final.py
+            print(f"Processed output: {output}")  # Debug print to confirm processing
+        except Exception as e:
+            output = f"An error occurred: {e}"
+            print(e)  # Log to console for debugging
         return render_template('index.html', user_input=user_input, output=output)
     else:
         return render_template('index.html', output=None)
