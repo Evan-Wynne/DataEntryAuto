@@ -1,7 +1,5 @@
 
 '''
-
-
 import re
 
 # Define patterns for extraction
@@ -24,6 +22,7 @@ counties = [
     "Derry", "Tyrone"
 ]
 
+# Paste your extract functions here
 
 def extract_title(input_text):
     title_match = title_pattern.search(input_text)
@@ -145,8 +144,6 @@ def extract_stage(input_text):
 
     return stage_mapping.get(stage, stage)
 
-##########################################################
-
 def main(input_text):
     deals = input_text.split("""Search for projects by keyword or project ID
 AnyAllExact
@@ -189,39 +186,9 @@ while True:
 
 input_text = "\n".join(input_lines)
 
-###################################################################
-
-def process_input(input_text):
-    deals = input_text.split("""Search for projects by keyword or project ID
-AnyAllExact
-DashboardProject SearchCompany SearchTrackingExport
-DL""")
-    results = []
-
-    for deal in deals[1:]:
-        if deal.strip():
-            title_of_deal = extract_title(deal)
-            area, location = extract_location(deal)
-            developer_name = extract_developer(deal)
-            unit_type = extract_unit_type(deal)
-            total_units = extract_total_units(deal)
-            total_square_feet = extract_total_square_feet(deal)
-            square_feet_per_unit = extract_square_feet_per_unit(deal)
-            stage = extract_stage(deal)
-            
-            result = [
-                developer_name, title_of_deal, area, location, unit_type,
-                '', total_units, '', total_square_feet, square_feet_per_unit, '\t\t\t\t\t\t', stage
-            ]
-            results.append(result)
-
-    # Format each result row
-    formatted_results = "\n".join(["\t".join(map(str, result)) for result in results])
-    return formatted_results
+main(input_text)
 
 
-
-#main(input_text)
 '''
 
 
@@ -367,6 +334,42 @@ def extract_stage(input_text):
     return stage_mapping.get(stage, stage)
 
 def process_input(input_text):
+    print(f"Processing input: {input_text}")  # Initial input debugging
+    deals = input_text.split("""Search for projects by keyword or project ID
+AnyAllExact
+DashboardProject SearchCompany SearchTrackingExport
+DL""")  # Adjust this if the real input delimiter differs
+
+    if len(deals) <= 1:
+        print("No deals found after splitting the input.")  # Check if splitting is working
+        return "No formatted data found."
+
+    results = []
+    for deal in deals[1:]:
+        if deal.strip():  # Ensure there is data to process
+            print("Processing deal:", deal[:100])  # Print first 100 chars of each deal for debugging
+            title_of_deal = extract_title(deal)
+            area, location = extract_location(deal)
+            developer_name = extract_developer(deal)
+            unit_type = extract_unit_type(deal)
+            total_units = extract_total_units(deal)
+            total_square_feet = extract_total_square_feet(deal)
+            square_feet_per_unit = extract_square_feet_per_unit(deal)
+            stage = extract_stage(deal)
+            
+            result = [
+                developer_name, title_of_deal, area, location, unit_type,
+                total_units, total_square_feet, square_feet_per_unit, stage
+            ]
+            results.append(result)
+            print("Deal processed:", result)  # Debug output for each processed deal
+
+    formatted_results = "\n".join(["\t".join(map(str, result)) for result in results])
+    print("Formatted results: ", formatted_results)  # Final formatted output debugging
+    return formatted_results
+
+'''
+def process_input(input_text):
     print(f"Processing input: {input_text}")  # Debug print for input
     deals = input_text.split("""Search for projects by keyword or project ID
 AnyAllExact
@@ -396,3 +399,4 @@ DL""")
     print(f"Formatted results: {formatted_results}")  # Debug print for output
     return formatted_results
     #return "formatted results"
+'''
