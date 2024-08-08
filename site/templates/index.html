@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Input App</title>
+</head>
+<body>
+    <h1>Input Text</h1>
+    <form method="post">
+        <input type="text" name="textinput" required>
+        <button type="submit">Submit</button>
+    </form>
+    {% if output %}
+    <h2>Input Received</h2>
+    <p>{{ user_input }}</p>  <!-- Displaying user input -->
+    <h2>Processed Output</h2>
+    <p>{{ output }}</p>  <!-- Displaying processed output -->
+    {% endif %}
+</body>
+</html>

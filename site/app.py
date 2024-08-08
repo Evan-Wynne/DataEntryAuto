@@ -1,30 +1,19 @@
-from flask import Flask, request, jsonify  # Import necessary modules
-import subprocess  # Import subprocess module for running external commands
-import os  # Import os module for file operations
+from flask import Flask, render_template, request
+import final  # Ensure final.py contains the process_input function
 
-app = Flask(__name__)  # Create a Flask application
+app = Flask(__name__)
 
-@app.route('/run', methods=['POST'])  # Define a route for POST requests to '/run'
-def run_code():
-    data = request.get_json()
-    code = data['code']
-    
-    # Path to the final.py file
-    script_path = 'final.py'
-    
-    # Write the input code to final.py
-    with open(script_path, 'w') as file:
-        file.write(code)
-    
-    try:
-        # Run the Python code using subprocess
-        result = subprocess.run(['python', script_path], capture_output=True, text=True, check=True)
-        output = result.stdout
-    except subprocess.CalledProcessError as e:
-        output = e.stderr
-    
-    return jsonify({ 'output': output })
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        user_input = request.form['textinput']
+        # Call a processing function from final.py
+        output = final.process_input(user_input)  # This function should process the input
+        return render_template('index.html', user_input=user_input, output=output)
+    return render_template('index.html', output=None)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')  # Run the Flask application
+    app.run(debug=True, port=5001)
 
+
+''''''

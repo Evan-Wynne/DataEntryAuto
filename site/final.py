@@ -21,7 +21,9 @@ counties = [
 ]
 
 # Paste your extract functions here
-
+def process_input(user_input):
+    # Replace the following line with your actual processing logic
+    return f"Processed output for: {user_input}"
 def extract_title(input_text):
     title_match = title_pattern.search(input_text)
     if title_match:
