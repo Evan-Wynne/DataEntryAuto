@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request
 import final  # This should have the processing functions
+# Right after imports in app.py
+print(dir(final))  # This will print all attributes and methods in the final module
 
 app = Flask(__name__)
 
