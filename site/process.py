@@ -1,6 +1,7 @@
 
 '''
 
+
 import re
 
 # Define patterns for extraction
@@ -223,8 +224,8 @@ DL""")
 #main(input_text)
 '''
 
-import re
 
+import re
 # Define patterns for extraction
 title_pattern = re.compile(r'(€.*?)-(.*?)(?:Stage|Updated|Open)', re.DOTALL)
 location_pattern = re.compile(r'Location\s+(.*?)(?:\nLinked|CIS Researcher)', re.DOTALL)
@@ -390,12 +391,8 @@ DL""")
             ]
             results.append(result)
 
-
-
     # Format each result row
     formatted_results = "\n".join(["\t".join(map(str, result)) for result in results])
     print(f"Formatted results: {formatted_results}")  # Debug print for output
-    #return formatted_results
-    return "Processed result"
-
-
+    return formatted_results
+    #return "formatted results"

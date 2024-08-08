@@ -25,7 +25,26 @@
         </form>
         {% if output %}
         <h2>Processed Output</h2>
-        <p>{{ output }}</p>  <!-- Displaying processed output -->
+        <table>
+            <tr>
+                <th>Developer</th>
+                <th>Title</th>
+                <th>Area</th>
+                <th>Location</th>
+                <th>Type</th>
+                <th>Units</th>
+                <th>Square Feet</th>
+                <th>Per Unit</th>
+                <th>Stage</th>
+            </tr>
+            {% for line in output.split('\n') %}
+            <tr>
+                {% for item in line.split('\t') %}
+                <td>{{ item }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
         {% endif %}
     </div>
 </body>
