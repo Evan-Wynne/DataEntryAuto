@@ -1,53 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Text Input App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copy Table Example</title>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 50px;
-            font-family: Arial, sans-serif;
-        }
         .container {
-            width: 80%;
-            max-width: 1000px;
-        }
-        .center {
+            position: relative;
             width: 100%;
-            text-align: center;
         }
-        textarea {
-            width: 100%;
-            height: 200px;
+
+        .copy-button {
+            position: absolute;
+            top: calc(50% - 60px);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 5px;
         }
+
+        .copy-button:hover {
+            background-color: #45a049;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-        th, td {
-            border: 1px solid #ddd;
+
+        table, th, td {
+            border: 1px solid black;
             padding: 8px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
-            font-weight: bold;
         }
     </style>
+    <script>
+        function copyTable() {
+            // Get the tbody rows
+            var rows = document.getElementById('outputTable').querySelectorAll('tbody tr');
+
+            // Create a temporary textarea to hold the table text
+            var tempTextArea = document.createElement('textarea');
+
+            // Loop through the rows and extract the text
+            rows.forEach(function(row) {
+                var cols = row.querySelectorAll('td');
+                var rowText = [];
+                cols.forEach(function(col) {
+                    rowText.push(col.innerText); // Get the text content of each cell
+                });
+                tempTextArea.value += rowText.join('\t') + '\n'; // Join columns with tabs, rows with newline
+            });
+
+            // Append the textarea to the body
+            document.body.appendChild(tempTextArea);
+
+            // Select and copy the content
+            tempTextArea.select();
+            document.execCommand('copy');
+
+            // Alert the user
+            alert('Table copied to clipboard');
+
+            // Remove the temporary textarea
+            document.body.removeChild(tempTextArea);
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <h1>Enter Text</h1>
         <form method="post" class="center">
-            <textarea name="textinput" required></textarea>
+            <textarea name="textinput" required="" style="width: 500px; height: 350px;"></textarea>
             <br>
             <button type="submit">Submit</button>
         </form>
         {% if output %}
-        <table>
+        <button class="copy-button" onclick="copyTable()">Copy Table</button>
+        <table id="outputTable">
             <thead>
                 <tr>
                     <th>Developer</th>
@@ -60,6 +100,7 @@
                     <th></th> <!-- Empty column after Total Units -->
                     <th>Total Square Feet</th>
                     <th>Square Feet/Unit</th>
+                    <!-- Added empty columns to match the visual representation -->
                     <th></th>
                     <th></th>
                     <th></th>
@@ -84,3 +125,12 @@
     </div>
 </body>
 </html>
+
+<!--
+
+CIS Ireland:
+Log in - CIS Online (cisireland.com)
+Username: david.lawlor@cantor.com
+PW: CF22@cis
+
+-->

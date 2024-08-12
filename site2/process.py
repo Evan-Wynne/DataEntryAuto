@@ -275,7 +275,6 @@ def extract_title(input_text):
 def extract_location(input_text):
     location_match = location_pattern.search(input_text)
     if not location_match:
-        print("Location not found.")
         return "Area not found", "Location not found"
     
     full_location = location_match.group(1).strip()
@@ -298,8 +297,8 @@ def extract_location(input_text):
         if location != "Location not found":
             break
 
-    print(f"Extracted location: Area - {area}, Location - {location}")  # Debug print
     return area, location
+
 
 def extract_developer(input_text):
     developer_match = developer_pattern.search(input_text)
