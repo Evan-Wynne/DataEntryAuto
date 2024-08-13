@@ -21,7 +21,7 @@ def index():
 
 @app.route('/other')
 def test():
-    return render_template('test.html')
+    return render_template('other.html')
 
 
 if __name__ == '__main__':
