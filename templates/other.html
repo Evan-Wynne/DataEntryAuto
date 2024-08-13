@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sample Input</title>
+    <style>
+        .back-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: rgb(101, 101, 222);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .back-link:hover {
+            background-color: darkblue;
+        }
+    </style>
+
+    <a href="/" class="back-link">Go back to the main page</a>
     <script>
         function copyToClipboard() {
             var copyText = document.getElementById("sampleInput");
@@ -15,8 +32,8 @@
     </script>
 </head>
 <body>
-    <h1>Sample Input</h1>
     <p>Here is a sample input you can use:</p>
+    <p>Go back to the main page and paste this text in the input box*</p>
     <textarea id="sampleInput" rows="10" cols="50">        Search for projects by keyword or project ID
         AnyAllExact
         DashboardProject SearchCompany SearchTrackingExport
@@ -1057,6 +1074,21 @@
     <br>
     <button onclick="copyToClipboard()">Copy to Clipboard</button>
     <br>
-    <a href="/">Go back to the main page</a>
+    <style>
+        button {
+            background-color: blue;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: darkblue;
+        }
+    </style>
+
+
 </body>
 </html>
