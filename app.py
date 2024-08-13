@@ -18,5 +18,11 @@ def index():
             output = f"Error during processing: {e}"
     return render_template('index.html', user_input=user_input, output=output)
 
+
+@app.route('/other')
+def test():
+    return render_template('other.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
