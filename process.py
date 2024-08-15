@@ -9,6 +9,7 @@ total_units_pattern = re.compile(r'Total Res Units\s*[:\-]?\s*(\d+)', re.IGNOREC
 hotel_bedrooms_pattern = re.compile(r'Hotel Bedrooms\s*[:\-]?\s*(\d+)', re.IGNORECASE)
 square_meters_pattern = re.compile(r'Floor\s*Area\s*[:\-]?\s*(\d[\d,]*\.?\d*)\s*m2', re.IGNORECASE)
 stage_pattern = re.compile(r'Stage\s*(.*?)\n', re.IGNORECASE)
+appeal_status_pattern = re.compile(r'Appeal Status\s*(.*?)\n(?=Links and Files)', re.IGNORECASE)
 
 # Define all counties
 counties = [
